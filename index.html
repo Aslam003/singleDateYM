@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script
+      type="text/javascript"
+      src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"
+    ></script>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css"
+    />
+  </head>
+  <body style="margin: 10px auto">
+    <input type="text" name="daterange" />
+
+    <script>
+      $('input[name="dates"]').daterangepicker();
+      $(function () {
+        let holidays = [
+          "11 Mar 2021",
+          "02 Apr 2021",
+          "13 Apr 2021",
+          "13 May 2021",
+          "10 Sep 2021",
+          "15 Oct 2021",
+          "04 Nov 2021",
+        ];
+
+        $('input[name="daterange"]').daterangepicker(
+          {
+            singleDatePicker: true,
+            minDate: new Date(),
+            opens: "center",
+            isInvalidDate: function (date) {
+              for (let holiday of holidays) {
+                if (
+                  new Date(holiday).toDateString() ==
+                  new Date(date).toDateString()
+                ) {
+                  return true;
+                }
+              }
+
+              if (
+                new Date(date).getDay() === 0 ||
+                new Date(date).getDay() == 6
+              ) {
+                return true;
+              } else {
+                return false;
+              }
+            },
+          },
+          function (start, end, label) {
+          window.parent.postMessage(
+        JSON.stringify({
+            event_code: "ym-client-event",
+            data: JSON.stringify({
+                event: {
+                    code: "data",
+                    data: {
+                        startDate: start.format(
+                "YYYY-MM-DD"
+              ),
+                        endDate:end.format(
+                "YYYY-MM-DD"
+              )
+                    },
+                },
+            }),
+        }),
+        "*"
+    );
+            console.log(
+              `A new date selection was made: ${start.format(
+                "YYYY-MM-DD"
+              )} to ${end.format("YYYY-MM-DD")} `
+            );
+          }
+        );
+      });
+    </script>
+  </body>
+</html>
